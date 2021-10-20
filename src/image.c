@@ -326,6 +326,128 @@ int compare_by_probs(const void *a_ptr, const void *b_ptr) {
     return delta < 0 ? -1 : delta > 0 ? 1 : 0;
 }
 
+
+
+
+
+// ====================================================================
+// Draw Detection
+// ====================================================================
+
+
+// Object proximity
+// Inputs: Bounding box and image
+// Output: String indicating how close the object is, determined by lower edge of b
+//         ['Very close', 'Close', 'Normal', 'Far', 'Very far']
+
+const char* object_proximity(const box b, const image img) {
+
+    /*  |-------------------------------|  */
+    /*  |    Horizon at (0, H/4)        |  */
+    /*  |-------------------------------|  */
+    /*  |           Ranges              |  */
+    /*  |-------------------------------|  */
+    /*  | Very close | [5H/8 - H]       |  */
+    /*  | Close      | [7H/16 - 5H/8)   |  */
+    /*  | Normal     | [11H/32 - 7H/16) |  */
+    /*  | Far        | [19H/64 - 11H/32)|  */
+    /*  | Very far   | [0 - 19H/64)     |  */
+    /*  |-------------------------------|  */
+
+
+    int bot = (b.y + b.h / 2.)*img.h;
+    if (bot > img.h - 1) bot = img.h - 1;
+
+    float h = (float)img.h - 1;
+
+    // Classify
+
+    if (bot >= 5*h/8) {
+
+        return "Very close";
+
+    } else if (bot < 5*h/8 && bot >= 7*h/16) {
+
+        return "Close";
+
+    } else if (bot < 7*h/16 && bot >= 11*h/32) {
+
+        return "Normal";
+
+    } else if (bot < 11*h/32 && bot >= 19*h/64) {
+
+        return "Far";
+
+    } else {
+
+        return "Very far";
+
+    }
+
+}
+
+
+
+/* 
+
+Function for the triangle-method of calculating object lane position
+Triangle T is defined by 3 points p1(W/3, H), p2(2W/3, H), p3(W/2, H/4). p1-p2 is the base.
+
+Using the barycentric coordinate system (http://totologic.blogspot.com/2014/01/accurate-point-in-triangle-test.html), 
+the function determines whether the object is to the left, right or front, based on the location of the center of the 
+lower edge of the bounding box
+
+*/
+
+const char* object_lane_position_triangle(const box b, const image img) {
+
+    // Center of bottom edge of the box (b_x, b_y)
+    float b_x = b.x*img.w;
+    float b_y = (b.y + b.h / 2.)*img.h;
+    if (b_y > img.h - 1) b_y = img.h - 1;
+
+
+    // Triangle vertex coordinates p1(x1, y1), p2(x2, y2) and p3(x3, y3)
+    float x1 = img.w/3.;
+    float y1 = (float)img.h;
+
+    float x2 = 2*img.w/3.;
+    float y2 = (float)img.h;
+
+    float x3 = img.w/2.;
+    float y3 = img.h/4.;
+
+    
+    // Barycentric coordinate system
+    float denominator = (y2 - y3)*(x1 - x3) + (x3 - x2)*(y1 - y3);
+
+    float a_coord = ((y2 - y3)*(b_x - x3) + (x3 - x2)*(b_y - y3)) / denominator;
+    float b_coord = ((y3 - y1)*(b_x - x3) + (x1 - x3)*(b_y - y3)) / denominator;
+    float c_coord = 1. - a_coord - b_coord;
+
+    //printf("a = %0.4f, b = %0.4f, c = %0.4f \n", a, b, c);
+
+    if (0 <= a_coord && a_coord <= 1 && 0 <= b_coord && b_coord <= 1 && 0 <= c_coord && c_coord <= 1) {
+
+        return "front";
+
+    } else {
+
+        if (b_x >= x3) {
+
+            return "right";
+
+        } else {
+
+            return "left";
+
+        }
+
+    }
+
+}
+
+
 void draw_detections_v3(image im, detection *dets, int num, float thresh, char **names, image **alphabet, int classes, int ext_output)
 {
     static int frame_id = 0;
@@ -447,7 +569,20 @@ void draw_detections_v3(image im, detection *dets, int num, float thresh, char *
                 image label = get_label_v3(alphabet, labelstr, (im.h*.02));
                 //draw_label(im, top + width, left, label, rgb);
                 draw_weighted_label(im, top + width, left, label, rgb, 0.7);
+
+                /* Proximity and lane position */
+
+                const char* proximity = object_proximity(b, im);
+                image proximity_label = get_label_v3(alphabet, proximity, (im.h*0.02));
+                draw_weighted_label(im, bot - width, left, proximity_label, rgb, 0.7);
+
+                const char* lane_position = object_lane_position_triangle(b, im);
+                image lane_position_label = get_label_v3(alphabet, lane_position, (im.h*0.02));
+                draw_weighted_label(im, bot - width, right - lane_position_label.w, lane_position_label, rgb, 0.7);
+
                 free_image(label);
+                free_image(proximity_label);
+                free_image(lane_position_label);
             }
             if (selected_detections[i].det.mask) {
                 image mask = float_to_image(14, 14, 1, selected_detections[i].det.mask);
