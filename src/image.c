@@ -340,8 +340,6 @@ int compare_by_probs(const void *a_ptr, const void *b_ptr) {
 // Output: String indicating how close the object is, determined by lower edge of b
 //         ['Very close', 'Close', 'Normal', 'Far', 'Very far']
 
-const char* object_proximity(const box b, const image img) {
-
     /*  |-------------------------------|  */
     /*  |    Horizon at (0, H/4)        |  */
     /*  |-------------------------------|  */
@@ -353,6 +351,8 @@ const char* object_proximity(const box b, const image img) {
     /*  | Far        | [19H/64 - 11H/32)|  */
     /*  | Very far   | [0 - 19H/64)     |  */
     /*  |-------------------------------|  */
+
+/*const char* object_proximity(const box b, const image img) {
 
 
     int bot = (b.y + b.h / 2.)*img.h;
@@ -384,6 +384,41 @@ const char* object_proximity(const box b, const image img) {
 
     }
 
+}*/
+
+
+// coordinates are relative (not absolute)
+const char* object_proximity(int x, int y, int w, int h, const image img) {
+
+    int bot = (y + h / 2.)*img.h;
+    if (bot > img.h - 1) bot = img.h - 1;
+
+    float img_h = (float)img.h - 1;
+
+    // Classify
+
+    if (bot >= 5*img_h/8) {
+
+        return "Very close";
+
+    } else if (bot < 5*img_h/8 && bot >= 7*img_h/16) {
+
+        return "Close";
+
+    } else if (bot < 7*img_h/16 && bot >= 11*img_h/32) {
+
+        return "Normal";
+
+    } else if (bot < 11*img_h/32 && bot >= 19*img_h/64) {
+
+        return "Far";
+
+    } else {
+
+        return "Very far";
+
+    }
+
 }
 
 
@@ -399,7 +434,7 @@ lower edge of the bounding box
 
 */
 
-const char* object_lane_position_triangle(const box b, const image img) {
+/*const char* object_lane_position_triangle(const box b, const image img) {
 
     // Center of bottom edge of the box (b_x, b_y)
     float b_x = b.x*img.w;
@@ -445,7 +480,7 @@ const char* object_lane_position_triangle(const box b, const image img) {
 
     }
 
-}
+}*/
 
 
 void draw_detections_v3(image im, detection *dets, int num, float thresh, char **names, image **alphabet, int classes, int ext_output)
@@ -572,17 +607,17 @@ void draw_detections_v3(image im, detection *dets, int num, float thresh, char *
 
                 /* Proximity and lane position */
 
-                const char* proximity = object_proximity(b, im);
-                image proximity_label = get_label_v3(alphabet, proximity, (im.h*0.02));
-                draw_weighted_label(im, bot - width, left, proximity_label, rgb, 0.7);
+                //const char* proximity = object_proximity(b, im);
+                //image proximity_label = get_label_v3(alphabet, proximity, (im.h*0.02));
+                //draw_weighted_label(im, bot - width, left, proximity_label, rgb, 0.7);
 
-                const char* lane_position = object_lane_position_triangle(b, im);
-                image lane_position_label = get_label_v3(alphabet, lane_position, (im.h*0.02));
-                draw_weighted_label(im, bot - width, right - lane_position_label.w, lane_position_label, rgb, 0.7);
+                //const char* lane_position = object_lane_position_triangle(b, im);
+                //image lane_position_label = get_label_v3(alphabet, lane_position, (im.h*0.02));
+                //draw_weighted_label(im, bot - width, right - lane_position_label.w, lane_position_label, rgb, 0.7);
 
                 free_image(label);
-                free_image(proximity_label);
-                free_image(lane_position_label);
+                //free_image(proximity_label);
+                //free_image(lane_position_label);
             }
             if (selected_detections[i].det.mask) {
                 image mask = float_to_image(14, 14, 1, selected_detections[i].det.mask);
