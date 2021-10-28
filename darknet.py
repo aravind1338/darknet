@@ -237,7 +237,7 @@ def get_obj_proximity(x, y, w, h, image):
 
     img_height, img_width, _ = image.shape
 
-    return lib.object_proximity(x, y, w, h, img_width, img_height)
+    return c_char_p(lib.object_proximity(x, y, w, h, img_width, img_height))
 
 #def get_obj_position(x, y, w, h, image):
 #
