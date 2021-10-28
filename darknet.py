@@ -237,7 +237,7 @@ def get_obj_proximity(x, y, w, h, image):
 
     img_height, img_width, _ = image.shape
 
-    return POINTER(c_char_p(lib.object_proximity(x, y, w, h, img_width, img_height)))
+    return lib.object_proximity(x, y, w, h, img_width, img_height)
 
 #def get_obj_position(x, y, w, h, image):
 #
@@ -346,3 +346,7 @@ network_predict_batch = lib.network_predict_batch
 network_predict_batch.argtypes = [c_void_p, IMAGE, c_int, c_int, c_int,
                                    c_float, c_float, POINTER(c_int), c_int, c_int]
 network_predict_batch.restype = POINTER(DETNUMPAIR)
+
+object_proximity = lib.object_proximity
+object_proximity.argtypes = [c_float, c_float, c_float, c_float, c_int, c_int]
+object_proximity.restype = c_char_p
