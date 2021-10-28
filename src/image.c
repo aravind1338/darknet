@@ -399,23 +399,23 @@ const char* object_proximity(float x, float y, float w, float h, int img_w, int 
 
     if (bot >= 5*new_img_h/8) {
 
-        return b"Very close";
+        return "Very close";
 
     } else if (bot < 5*new_img_h/8 && bot >= 7*new_img_h/16) {
 
-        return b"Close";
+        return "Close";
 
     } else if (bot < 7*new_img_h/16 && bot >= 11*new_img_h/32) {
 
-        return b"Normal";
+        return "Normal";
 
     } else if (bot < 11*new_img_h/32 && bot >= 19*new_img_h/64) {
 
-        return b"Far";
+        return "Far";
 
     } else {
 
-        return b"Very far";
+        return "Very far";
 
     }
 
