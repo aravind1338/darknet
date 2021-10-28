@@ -245,7 +245,7 @@ def get_obj_position(x, y, w, h, image):
 
     img_height, img_width, _ = image.shape
 
-    return object_lane_position_triangle(x, y, w, h, image_width, image_height)
+    return object_lane_position_triangle(x, y, w, h, img_width, img_height)
 
 
 
