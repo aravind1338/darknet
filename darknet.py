@@ -235,11 +235,11 @@ def detect_image(network, class_names, image, thresh=.5, hier_thresh=.5, nms=.45
 ########## Functions for object proximity and object position ##########
 def get_obj_proximity(bbox, image):
 
-    return object_proximity(bbox, image)
+    return lib.object_proximity(bbox, image)
 
 def get_obj_position(bbox, image):
 
-    return object_lane_position_triangle(bbox, image)
+    return lib.object_lane_position_triangle(bbox, image)
 
 
 
