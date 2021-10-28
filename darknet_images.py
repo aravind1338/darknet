@@ -167,7 +167,13 @@ def save_annotations(name, image, detections, class_names):
         for label, confidence, bbox in detections:
             x, y, w, h = convert2relative(image, bbox)
             label = class_names.index(label)
-            f.write("{} {:.4f} {:.4f} {:.4f} {:.4f} {:.4f}\n".format(label, x, y, w, h, float(confidence)))
+
+            ##### object proximity and position #####
+            proximity = darknet.get_obj_proximity(bbox, image)
+            position = darknet.get_obj_position(bbox, image)
+
+            #f.write("{} {:.4f} {:.4f} {:.4f} {:.4f} {:.4f}\n".format(label, x, y, w, h, float(confidence)))
+            f.write("{} {} {}\n".format(label, proximity, position))
 
 
 def batch_detection_example():
