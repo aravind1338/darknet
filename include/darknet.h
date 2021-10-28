@@ -1068,7 +1068,7 @@ LIB_API void free_image(image m);
 LIB_API image crop_image(image im, int dx, int dy, int w, int h);
 LIB_API image resize_min(image im, int min);
 
-LIB_API const char* object_proximity(int x, int y, int w, int h, const image img);
+LIB_API const char* object_proximity(int x, int y, int w, int h, int img_w, int img_h);
 //LIB_API const char* object_lane_position_triangle(int x, int y, int w, int h, const image img);
 
 // layer.h

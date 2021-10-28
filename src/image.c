@@ -388,28 +388,28 @@ int compare_by_probs(const void *a_ptr, const void *b_ptr) {
 
 
 // coordinates are relative (not absolute)
-const char* object_proximity(int x, int y, int w, int h, const image img) {
+const char* object_proximity(int x, int y, int w, int h, int img_w, int img_h) {
 
-    int bot = (y + h / 2.)*img.h;
-    if (bot > img.h - 1) bot = img.h - 1;
+    int bot = (y + h / 2.)*img_h;
+    if (bot > img_h - 1) bot = img_h - 1;
 
-    float img_h = (float)img.h - 1;
+    float new_img_h = (float)img_h - 1;
 
     // Classify
 
-    if (bot >= 5*img_h/8) {
+    if (bot >= 5*new_img_h/8) {
 
         return "Very close";
 
-    } else if (bot < 5*img_h/8 && bot >= 7*img_h/16) {
+    } else if (bot < 5*new_img_h/8 && bot >= 7*new_img_h/16) {
 
         return "Close";
 
-    } else if (bot < 7*img_h/16 && bot >= 11*img_h/32) {
+    } else if (bot < 7*new_img_h/16 && bot >= 11*new_img_h/32) {
 
         return "Normal";
 
-    } else if (bot < 11*img_h/32 && bot >= 19*img_h/64) {
+    } else if (bot < 11*new_img_h/32 && bot >= 19*new_img_h/64) {
 
         return "Far";
 
