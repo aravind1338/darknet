@@ -233,15 +233,19 @@ def detect_image(network, class_names, image, thresh=.5, hier_thresh=.5, nms=.45
 
 
 ########## Functions for object proximity and object position ##########
+
 def get_obj_proximity(x, y, w, h, image):
 
     img_height, img_width, _ = image.shape
 
-    return lib.object_proximity(x, y, w, h, img_width, img_height)
+    return object_proximity(x, y, w, h, img_width, img_height)
 
-#def get_obj_position(x, y, w, h, image):
-#
-#    return lib.object_lane_position_triangle(x, y, w, h, image)
+
+def get_obj_position(x, y, w, h, image):
+
+    img_height, img_width, _ = image.shape
+
+    return object_lane_position_triangle(x, y, w, h, image_width, image_height)
 
 
 
@@ -350,3 +354,8 @@ network_predict_batch.restype = POINTER(DETNUMPAIR)
 object_proximity = lib.object_proximity
 object_proximity.argtypes = [c_float, c_float, c_float, c_float, c_int, c_int]
 object_proximity.restype = c_char_p
+
+object_lane_position_triangle = lib.object_lane_position_triangle
+object_lane_position_triangle.argtypes = [c_float, c_float, c_float, c_float, c_int, c_int]
+object_lane_position_triangle.restype = c_char_p
+

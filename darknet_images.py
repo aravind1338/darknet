@@ -171,10 +171,11 @@ def save_annotations(name, image, detections, class_names):
             ##### object proximity and position #####
             proximity = darknet.get_obj_proximity(x, y, w, h, image)
             proximity = proximity.decode("utf-8")
-            #position = darknet.get_obj_position(x, y, w, h, image)
+            position = darknet.get_obj_position(x, y, w, h, image)
+            position = position.decode("utf-8")
 
             #f.write("{} {:.4f} {:.4f} {:.4f} {:.4f} {:.4f}\n".format(label, x, y, w, h, float(confidence)))
-            f.write("{}, {}\n".format(label, proximity))
+            f.write("{}, {}, {}\n".format(label, proximity, position))
 
 
 def batch_detection_example():

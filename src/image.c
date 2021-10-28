@@ -336,7 +336,7 @@ int compare_by_probs(const void *a_ptr, const void *b_ptr) {
 
 
 // Object proximity
-// Inputs: Bounding box and image
+// Inputs: Bounding box coordinates (relative), image width, image height
 // Output: String indicating how close the object is, determined by lower edge of b
 //         ['Very close', 'Close', 'Normal', 'Far', 'Very far']
 
@@ -352,42 +352,6 @@ int compare_by_probs(const void *a_ptr, const void *b_ptr) {
     /*  | Very far   | [0 - 19H/64)     |  */
     /*  |-------------------------------|  */
 
-/*const char* object_proximity(const box b, const image img) {
-
-
-    int bot = (b.y + b.h / 2.)*img.h;
-    if (bot > img.h - 1) bot = img.h - 1;
-
-    float h = (float)img.h - 1;
-
-    // Classify
-
-    if (bot >= 5*h/8) {
-
-        return "Very close";
-
-    } else if (bot < 5*h/8 && bot >= 7*h/16) {
-
-        return "Close";
-
-    } else if (bot < 7*h/16 && bot >= 11*h/32) {
-
-        return "Normal";
-
-    } else if (bot < 11*h/32 && bot >= 19*h/64) {
-
-        return "Far";
-
-    } else {
-
-        return "Very far";
-
-    }
-
-}*/
-
-
-// coordinates are relative (not absolute)
 const char* object_proximity(float x, float y, float w, float h, int img_w, int img_h) {
 
     int bot = (y + h / 2.)*img_h;
@@ -434,23 +398,23 @@ lower edge of the bounding box
 
 */
 
-/*const char* object_lane_position_triangle(const box b, const image img) {
+const char* object_lane_position_triangle(float x, float y, float w, float h, int img_w, int img_h) {
 
     // Center of bottom edge of the box (b_x, b_y)
-    float b_x = b.x*img.w;
-    float b_y = (b.y + b.h / 2.)*img.h;
-    if (b_y > img.h - 1) b_y = img.h - 1;
+    float b_x = x*img_w;
+    float b_y = (y + h / 2.)*img_h;
+    if (b_y > img_h - 1) b_y = img_h - 1;
 
 
     // Triangle vertex coordinates p1(x1, y1), p2(x2, y2) and p3(x3, y3)
-    float x1 = img.w/3.;
-    float y1 = (float)img.h;
+    float x1 = img_w/3.;
+    float y1 = (float)img_h;
 
-    float x2 = 2*img.w/3.;
-    float y2 = (float)img.h;
+    float x2 = 2*img_w/3.;
+    float y2 = (float)img_h;
 
-    float x3 = img.w/2.;
-    float y3 = img.h/4.;
+    float x3 = img_w/2.;
+    float y3 = img_h/4.;
 
     
     // Barycentric coordinate system
@@ -480,7 +444,7 @@ lower edge of the bounding box
 
     }
 
-}*/
+}
 
 
 void draw_detections_v3(image im, detection *dets, int num, float thresh, char **names, image **alphabet, int classes, int ext_output)
