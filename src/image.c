@@ -388,7 +388,7 @@ int compare_by_probs(const void *a_ptr, const void *b_ptr) {
 
 
 // coordinates are relative (not absolute)
-const char* object_proximity(int x, int y, int w, int h, int img_w, int img_h) {
+const char* object_proximity(float x, float y, float w, float h, int img_w, int img_h) {
 
     int bot = (y + h / 2.)*img_h;
     if (bot > img_h - 1) bot = img_h - 1;
