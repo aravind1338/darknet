@@ -175,7 +175,7 @@ def save_annotations(name, image, detections, class_names):
             position = position.decode("utf-8")
 
             #f.write("{} {:.4f} {:.4f} {:.4f} {:.4f} {:.4f}\n".format(label, x, y, w, h, float(confidence)))
-            f.write("{}, {}, {}\n".format(label, proximity, position))
+            f.write("{}, {}, {}, {:.4f}, {:.4f}, {:.4f}, {:.4f}\n".format(label, proximity, position, x, y, w, h))
 
 
 def batch_detection_example():
